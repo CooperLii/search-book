@@ -7,15 +7,18 @@ const Wishlist = () => {
   const wishlist = useSelector((state) => state.wishlistSlice.wishlist);
 
   return (
-    <div>
-      <h3>Wishlist</h3>
-      <h4>{wishlist.length} books</h4>
-      <ul>
+    <div className="wishlist-section">
+      <div className="wishlist-header">
+        <h3 style={{ display: "inline" }}>Wishlist</h3>
+        <h4 style={{ display: "inline" }}>{wishlist.length} books</h4>
+      </div>
+      <ul className="wishlist">
         {wishlist.map((book) => {
           return (
             <li key={book?.id}>
               <span>{book?.volumeInfo?.title}</span>
               <button
+                className="btn-delete"
                 onClick={() => {
                   dispatch(deleteWishlist(book.id));
                 }}

@@ -20,7 +20,6 @@ const HomePage = () => {
     (async () => {
       if (keyword === "") return;
       const result = await searchbookApi(keyword, currentPage, 5);
-      console.log(result);
       if (result?.data?.totalItems !== undefined) {
         dispatch(updateTotalItems(result.data.totalItems));
       }
@@ -33,12 +32,11 @@ const HomePage = () => {
   }, [currentPage, keyword]);
 
   return (
-    <div>
-      <Searchbox></Searchbox>
+    <section className="bookList-section">
       <Pagination itemsPerPage={5}>
         <SearchResult></SearchResult>
       </Pagination>
-    </div>
+    </section>
   );
 };
 
