@@ -262,18 +262,19 @@ button:hover {
 
 .suggestions {
   border: 1px solid #999;
-
+  position: absolute;
   list-style: none;
   margin-top: 0;
-  max-height: 143px;
+  height: auto;
   overflow-y: auto;
   padding-left: 0;
-  width: 100%;
-  border-radius: 10px;
+  width: 50%;
+  /* border-radius: 10px; */
+  background-color: white;
 }
 .suggestions li {
   padding: 0.5rem;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 .suggestion-active,
 .suggestions li:hover {
@@ -282,10 +283,7 @@ button:hover {
   cursor: pointer;
   font-weight: 700;
 }
-.suggestions li:not(:last-of-type) {
-  border-top: 1px solid #999;
-  border-bottom: 1px solid #999;
-}
+
 @media only screen and (max-width: 800px) {
   .homePage-section {
     flex-direction: column;

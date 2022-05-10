@@ -1,189 +1,125 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  decrementCurrentPage,
-  incrementCurrentPage,
-  updateCurrentPage,
-} from "../../redux/slices/searchbookSlice";
-
-import ReactPaginate from "react-paginate";
+import React, { useEffect } from "react";
 import "./Pagination.css";
-// const Pagination = ({ children, itemsPerPage }) => {
+import { useDispatch, useSelector } from "react-redux";
 
-//   const currentPage = useSelector((state) => state.searchbookSlice.currentPage);
-//   const totalItems = useSelector((state) => state.searchbookSlice.totalItems);
+const Pagination = ({
+  children,
+  itemsPerPage,
+  handleClickNext,
+  handleClickPrev,
+  totalItems,
+  currentPage,
+  handleClickPage,
+  totalPages,
+}) => {
+  //const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const keyword = useSelector((state) => state.searchbookSlice.keyword);
 
-//   const dispatch = useDispatch();
+  // useEffect(() => {
+  //   console.log("Total items: " + totalItems);
+  //   console.log("total pages:", totalPages);
+  //   console.log("keyword", keyword);
+  // }, [totalItems]);
 
-//   const totalPages = Math.ceil(totalItems / itemsPerPage);
-//   const handleClickPrev = () => {
-//     if (currentPage <= 1) {
-//       return;
-//     }
-//     dispatch(decrementCurrentPage());
-//   };
-
-//   const handleClickNext = () => {
-//     if (currentPage >= totalPages) {
-//       return;
-//     }
-//     dispatch(incrementCurrentPage());
-//   };
-//     return (
-//       <div>
-//         {children}
-//         <div>
-//           {totalPages > 1 && (
-//             <>
-//               <button disabled={currentPage <= 1} onClick={handleClickPrev}>
-//                 Prev
-//               </button>
-//               <span>{currentPage}</span>
-//               <button
-//                 disabled={currentPage >= totalPages}
-//                 onClick={handleClickNext}
-//               >
-//                 Next
-//               </button>
-//             </>
-//           )}
-//         </div>
-//       </div>
-//     );
-
-// };
-
-// export default Pagination;
-
-/** const Pagination = ({ children, itemsPerPage }) => {
-  const currentPage = useSelector((state) => state.searchbookSlice.currentPage);
-  const totalItems = useSelector((state) => state.searchbookSlice.totalItems);
-  const searchResult = useSelector(
-    (state) => state.searchbookSlice.searchResult
-  );
-
-  const [pageNumberLimit, setpageNumberLimit] = useState(5);
-  const [maxPageNumberLimit, setmaxPageNumberLimit] = useState(5);
-  const [minPageNumberLimit, setminPageNumberLimit] = useState(0);
-  const dispatch = useDispatch();
-
-  const handleClick = (event) => {
-    dispatch(updateCurrentPage(Number(event.target.id)));
-  };
-
-  const pages = [];
-  for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
-    pages.push(i);
-  }
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = searchResult.slice(indexOfFirstItem, indexOfLastItem);
-
-  const renderPageNumbers = pages.map((number) => {
-    if (number < maxPageNumberLimit + 1 && number > minPageNumberLimit) {
-      return (
-        <li
-          key={number}
-          id={number}
-          onClick={handleClick}
-          className={currentPage === number ? "active" : null}
+  const renderPaginationButtons = () => {
+    const prevBtnEl = (
+      <button onClick={handleClickPrev} disabled={currentPage === 1}>
+        Prev
+      </button>
+    );
+    const firstPageBtnEl =
+      totalPages >= 2 ? (
+        <button
+          disabled={currentPage === 1}
+          onClick={() => {
+            handleClickPage(1);
+          }}
         >
-          {number}
-        </li>
+          1
+        </button>
+      ) : (
+        <></>
       );
-    } else {
-      return null;
-    }
-  });
+    const leftEllipsisEl = currentPage >= 4 ? <>...</> : <></>;
 
-  const handleNextbtn = () => {
-    dispatch(incrementCurrentPage());
+    const leftNeighbourBtnEl =
+      currentPage >= 3 ? (
+        <button
+          onClick={() => {
+            handleClickPage(currentPage - 1);
+          }}
+        >
+          {currentPage - 1}
+        </button>
+      ) : (
+        <></>
+      );
+    const currentPageBtnEl =
+      currentPage >= 2 && currentPage <= totalPages - 1 ? (
+        <button
+          disabled
+          onClick={() => {
+            handleClickPage(currentPage);
+          }}
+        >
+          {currentPage}
+        </button>
+      ) : (
+        <></>
+      );
+    const rightNeighbourBtnEl =
+      currentPage <= totalPages - 2 ? (
+        <button
+          onClick={() => {
+            handleClickPage(currentPage + 1);
+          }}
+        >
+          {currentPage + 1}
+        </button>
+      ) : (
+        <></>
+      );
 
-    if (currentPage + 1 > maxPageNumberLimit) {
-      setmaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
-      setminPageNumberLimit(minPageNumberLimit + pageNumberLimit);
-    }
+    const rightEllipsisEl = currentPage <= totalPages - 3 ? <>...</> : <></>;
+    const lastPageBtnEl =
+      totalPages >= 2 ? (
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => {
+            handleClickPage(totalPages);
+          }}
+        >
+          {totalPages}
+        </button>
+      ) : (
+        <></>
+      );
+    const nextBtnEl = (
+      <button onClick={handleClickNext} disabled={currentPage === totalPages}>
+        Next
+      </button>
+    );
+
+    return (
+      <>
+        {prevBtnEl}
+        {firstPageBtnEl}
+        {leftEllipsisEl}
+        {leftNeighbourBtnEl}
+        {currentPageBtnEl}
+        {rightNeighbourBtnEl}
+        {rightEllipsisEl}
+        {lastPageBtnEl}
+        {nextBtnEl}
+      </>
+    );
   };
-
-  const handlePrevbtn = () => {
-    dispatch(decrementCurrentPage());
-
-    if ((currentPage - 1) % pageNumberLimit === 0) {
-      setmaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
-      setminPageNumberLimit(minPageNumberLimit - pageNumberLimit);
-    }
-  };
-
-  let pageIncrementBtn = null;
-  if (pages.length > maxPageNumberLimit) {
-    pageIncrementBtn = <li onClick={handleNextbtn}> &hellip; </li>;
-  }
-
-  let pageDecrementBtn = null;
-  if (minPageNumberLimit >= 1) {
-    pageDecrementBtn = <li onClick={handlePrevbtn}> &hellip; </li>;
-  }
-
-  return (
-    <div>
-      {children}
-      <ul className="pageNumbers">
-        <li>
-          <button
-            onClick={handlePrevbtn}
-            disabled={currentPage === pages[0] ? true : false}
-          >
-            Prev
-          </button>
-        </li>
-        {pageDecrementBtn}
-        {renderPageNumbers}
-        {pageIncrementBtn}
-
-        <li>
-          <button
-            onClick={handleNextbtn}
-            disabled={currentPage === pages[pages.length - 1] ? true : false}
-          >
-            Next
-          </button>
-        </li>
-      </ul>
-    </div>
-  );
-};
-
-export default Pagination; **/
-
-const Pagination = ({ children, itemsPerPage }) => {
-  const currentPage = useSelector((state) => state.searchbookSlice.currentPage);
-  const totalItems = useSelector((state) => state.searchbookSlice.totalItems);
-
-  const dispatch = useDispatch();
-
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const handleClickPage = (e) => {
-    dispatch(updateCurrentPage(e.selected + 1));
-  };
-
   return (
     <div className="pagination__container">
       {children}
-
-      <ReactPaginate
-        previousLabel="<"
-        nextLabel=">"
-        pageCount={totalPages}
-        onPageChange={handleClickPage}
-        pageRangeDisplayed={4}
-        marginPagesDisplayed={1}
-        pageClassName="page-item"
-        breakLabel="..."
-        containerClassName="pagination"
-        renderOnZeroPageCount={null}
-      />
+      <div className="pagination__button-set">
+        {totalItems > 0 && renderPaginationButtons()}
+      </div>
     </div>
   );
 };

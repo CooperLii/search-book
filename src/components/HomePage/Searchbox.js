@@ -4,26 +4,30 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   updateCurrentPage,
   updateKeyword,
+  updateTotalItems,
 } from "../../redux/slices/searchbookSlice";
 import { searchbookApi } from "../../apis/searchbookApi";
 import axios from "axios";
+import SuggestionsList from "./SuggestionsList";
 
 const Searchbox = () => {
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(0);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const searchResult = useSelector(
-    (state) => state.searchbookSlice.searchResult
-  );
+  // const searchResult = useSelector(
+  //   (state) => state.searchbookSlice.searchResult
+  // );
 
   const cachedDebouncedFn = useCallback(
     _.debounce((input) => {
       (async () => {
-        const res = await searchbookApi(input, 1, 30);
-
+        // const res = await searchbookApi(input, 1, 30);
+        const res = await axios.get(
+          `https://www.googleapis.com/books/v1/volumes?q=intitle:${input}&startIndex=0&maxResults=10`
+        );
+        console.log("fetched");
         const suggestions = res.data?.items?.map((item) => {
           return item.volumeInfo.title;
         });
@@ -35,10 +39,11 @@ const Searchbox = () => {
         ).catch((error) => {
           console.error(error.message);
         });
-
+        console.log("suggestions number", filtered.length);
         setFilteredSuggestions(filtered);
         setShowSuggestions(true);
       })();
+
       dispatch(updateKeyword(input));
       dispatch(updateCurrentPage(1));
     }, 700),
@@ -61,28 +66,6 @@ const Searchbox = () => {
     });
   };
 
-  //   useEffect(() => {
-  //     const userInput = input; // Filter suggestions that don't contain the user's input
-  //     const unLinked = suggestions.filter((suggestion) =>
-  //       suggestion?.toLowerCase().includes(userInput?.toLowerCase())
-  //     );
-
-  //     console.log("unLinked", unLinked);
-
-  //     setFilteredSuggestions(unLinked);
-  //     setActiveSuggestionIndex(0);
-  //   }, [searchResult]);
-
-  const handleClickForSuggestions = (e) => {
-    e.preventDefault();
-    setFilteredSuggestions([]);
-    setInput(e.target.innerText);
-    console.log("hello");
-    console.log(e.target.innerText);
-    setActiveSuggestionIndex(0);
-    setShowSuggestions(false);
-  };
-
   const handleClick = (e) => {
     e.preventDefault();
     if (input !== "") {
@@ -97,33 +80,6 @@ const Searchbox = () => {
     setShowSuggestions(false);
   };
 
-  const SuggestionsListComponent = () => {
-    return filteredSuggestions.length ? (
-      <ul className="suggestions">
-        {filteredSuggestions.map((suggestion, index) => {
-          let className;
-          // Flag the active suggestion with a class
-          if (index === activeSuggestionIndex) {
-            className = "suggestion-active";
-          }
-          return (
-            <li
-              className={className}
-              key={index}
-              onClick={handleClickForSuggestions}
-            >
-              {suggestion}
-            </li>
-          );
-        })}
-      </ul>
-    ) : (
-      <div className="no-suggestions">
-        <em>No suggestions</em>
-      </div>
-    );
-  };
-
   return (
     <form className="searchbook-form">
       <div className="search-and-suggest">
@@ -131,10 +87,17 @@ const Searchbox = () => {
           value={input}
           onChange={handleChange}
           onFocus={onFocus}
-          //onBlur={onBlur}
+          onBlur={onBlur}
         />
         <button onClick={handleClick}>submit</button>
-        {showSuggestions && input && <SuggestionsListComponent />}
+        {showSuggestions && input && (
+          <SuggestionsList
+            setShowSuggestions={setShowSuggestions}
+            setInput={setInput}
+            filteredSuggestions={filteredSuggestions}
+            setFilteredSuggestions={setFilteredSuggestions}
+          />
+        )}
       </div>
 
       <p>{error}</p>

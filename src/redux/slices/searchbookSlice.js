@@ -17,6 +17,7 @@ export const searchbookSlice = createSlice({
       state.totalItems = action.payload;
     },
     updateCurrentPage: (state, action) => {
+      console.log(state.currentPage);
       state.currentPage = action.payload;
     },
     incrementCurrentPage: (state) => {

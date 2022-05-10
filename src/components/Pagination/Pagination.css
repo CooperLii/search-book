@@ -1,4 +1,4 @@
-ul.pagination {
+/* ul.pagination {
   list-style: none;
   padding: 0;
   display: flex;
@@ -41,7 +41,15 @@ ul.pagination li.page-item.selected {
   width: 48px;
   height: 30px;
   color: #337ab7;
-}
+} */
 .pagination__container {
   width: 100%;
+}
+.pagination__button-set {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  justify-content: center;
 }
