@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./Pagination.css";
-import { useDispatch, useSelector } from "react-redux";
 
 const Pagination = ({
   children,
@@ -10,110 +9,75 @@ const Pagination = ({
   totalItems,
   currentPage,
   handleClickPage,
-  totalPages,
 }) => {
-  //const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const keyword = useSelector((state) => state.searchbookSlice.keyword);
-
-  // useEffect(() => {
-  //   console.log("Total items: " + totalItems);
-  //   console.log("total pages:", totalPages);
-  //   console.log("keyword", keyword);
-  // }, [totalItems]);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const renderPaginationButtons = () => {
-    const prevBtnEl = (
+    const pageButton = (num) => (
+      <button
+        onClick={() => handleClickPage(num)}
+        disabled={num === currentPage}
+      >
+        {num}
+      </button>
+    );
+    const prevButtonEl = (
       <button onClick={handleClickPrev} disabled={currentPage === 1}>
         Prev
       </button>
     );
-    const firstPageBtnEl =
-      totalPages >= 2 ? (
-        <button
-          disabled={currentPage === 1}
-          onClick={() => {
-            handleClickPage(1);
-          }}
-        >
-          1
-        </button>
-      ) : (
-        <></>
-      );
-    const leftEllipsisEl = currentPage >= 4 ? <>...</> : <></>;
 
-    const leftNeighbourBtnEl =
-      currentPage >= 3 ? (
-        <button
-          onClick={() => {
-            handleClickPage(currentPage - 1);
-          }}
-        >
-          {currentPage - 1}
-        </button>
-      ) : (
-        <></>
-      );
-    const currentPageBtnEl =
-      currentPage >= 2 && currentPage <= totalPages - 1 ? (
-        <button
-          disabled
-          onClick={() => {
-            handleClickPage(currentPage);
-          }}
-        >
-          {currentPage}
-        </button>
-      ) : (
-        <></>
-      );
-    const rightNeighbourBtnEl =
-      currentPage <= totalPages - 2 ? (
-        <button
-          onClick={() => {
-            handleClickPage(currentPage + 1);
-          }}
-        >
-          {currentPage + 1}
-        </button>
-      ) : (
-        <></>
-      );
-
-    const rightEllipsisEl = currentPage <= totalPages - 3 ? <>...</> : <></>;
-    const lastPageBtnEl =
-      totalPages >= 2 ? (
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => {
-            handleClickPage(totalPages);
-          }}
-        >
-          {totalPages}
-        </button>
-      ) : (
-        <></>
-      );
-    const nextBtnEl = (
+    const nextButtonEl = (
       <button onClick={handleClickNext} disabled={currentPage === totalPages}>
         Next
       </button>
     );
 
-    return (
-      <>
-        {prevBtnEl}
-        {firstPageBtnEl}
-        {leftEllipsisEl}
-        {leftNeighbourBtnEl}
-        {currentPageBtnEl}
-        {rightNeighbourBtnEl}
-        {rightEllipsisEl}
-        {lastPageBtnEl}
-        {nextBtnEl}
-      </>
-    );
+    const firstFiveButtonsEl = Array(5)
+      .fill()
+      .map((_, index) => index + 1)
+      .map((num) => pageButton(num));
+
+    const lastFiveButtonsEl = Array(5)
+      .fill()
+      .map((_, index) => totalPages - 4 + index)
+      .map((num) => pageButton(num));
+
+    const currentPageButtonCluster = Array(3)
+      .fill()
+      .map((_, index) => currentPage + index - 1)
+      .map((num) => pageButton(num));
+
+    const ellipsis = <div>...</div>;
+
+    const firstButtonEl = pageButton(1);
+    const lastButtonEl = pageButton(totalPages);
+
+    let pageButtons;
+
+    if (totalPages <= 7) {
+      pageButtons = Array(totalPages)
+        .fill()
+        .map((_, index) => pageButton(index + 1));
+    } else {
+      if (currentPage <= 4) {
+        pageButtons = [...firstFiveButtonsEl, ellipsis, lastButtonEl];
+      } else if (currentPage > 4 && currentPage < totalPages - 3) {
+        pageButtons = [
+          firstButtonEl,
+          ellipsis,
+          ...currentPageButtonCluster,
+          ellipsis,
+          lastButtonEl,
+        ];
+      } else {
+        pageButtons = [firstButtonEl, ellipsis, ...lastFiveButtonsEl];
+      }
+    }
+
+    return [prevButtonEl, ...pageButtons, nextButtonEl];
   };
+
   return (
     <div className="pagination__container">
       {children}

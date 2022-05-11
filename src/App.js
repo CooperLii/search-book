@@ -28,7 +28,7 @@ function App() {
           </button>
         </nav>
         <Searchbox></Searchbox>
-      </header>{" "}
+      </header>
       {toggle === false ? (
         <div className="homePage-section">
           <HomePage></HomePage>

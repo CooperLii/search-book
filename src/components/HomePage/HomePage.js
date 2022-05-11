@@ -19,10 +19,7 @@ const HomePage = () => {
   const totalItems = useSelector((state) => state.searchbookSlice.totalItems);
   const itemsPerPage = 5;
 
-  const totalPages =
-    Math.ceil(totalItems / itemsPerPage) > 40
-      ? 40
-      : Math.ceil(totalItems / itemsPerPage);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const handleClickPrev = () => {
     if (currentPage <= 1) {
@@ -39,7 +36,6 @@ const HomePage = () => {
   };
 
   const handleClickPage = (targetPageNumber) => {
-    console.log("current page:", targetPageNumber);
     dispatch(updateCurrentPage(targetPageNumber));
   };
 
@@ -47,6 +43,7 @@ const HomePage = () => {
     (async () => {
       if (keyword === "") return;
       const result = await searchbookApi(keyword, currentPage, 5);
+
       if (result?.data?.totalItems !== undefined) {
         dispatch(updateTotalItems(result.data.totalItems));
       }
@@ -56,7 +53,7 @@ const HomePage = () => {
 
       window.scrollTo(0, 0);
     })();
-  }, [currentPage, keyword, dispatch]);
+  }, [currentPage, keyword]);
 
   return (
     <section className="bookList-section">
