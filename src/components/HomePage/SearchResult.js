@@ -3,7 +3,7 @@ import BookInfo from "./BookInfo";
 import { useSelector } from "react-redux";
 
 const SearchResult = () => {
-  const items = useSelector((state) => state.searchbookSlice.searchResult);
+  const items = useSelector((state) => state.searchbookSlice.bookList);
 
   return (
     <div>

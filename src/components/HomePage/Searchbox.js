@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import _ from "lodash";
-import { useDispatch } from "react-redux";
-import {
-  updateCurrentPage,
-  updateKeyword,
-} from "../../redux/slices/searchbookSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { updateKeyword } from "../../redux/slices/searchbookSlice";
 import { searchbookApi } from "../../apis/searchbookApi";
 
 const Searchbox = () => {
@@ -13,6 +10,7 @@ const Searchbox = () => {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.searchbookSlice.isLoading);
 
   const cachedDebouncedFn = useCallback(
     _.debounce((input) => {
@@ -50,7 +48,6 @@ const Searchbox = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(updateKeyword(input));
-    dispatch(updateCurrentPage(1));
   };
   const onFocus = () => {
     setShowSuggestions(true);
@@ -73,7 +70,8 @@ const Searchbox = () => {
             onFocus={onFocus}
             onBlur={onBlur}
           />
-          <button onClick={handleSubmit}>submit</button>
+          <button onClick={handleSubmit}>submit</button>{" "}
+          {isLoading ? <p>Loading...</p> : <></>}
         </div>
 
         {showSuggestions && (

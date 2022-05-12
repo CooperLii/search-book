@@ -1,20 +1,20 @@
 import "./App.css";
 import Searchbox from "../src/components/HomePage/Searchbox";
-
 import HomePage from "./components/HomePage/HomePage";
 import Wishlist from "./components/Wishlist/Wishlist";
-import { useSelector } from "react-redux";
+import { loadWishlist } from "./redux/slices/wishlistSlice";
+import { useDispatch } from "react-redux";
 import React, { useEffect } from "react";
+
 function App() {
   const [toggle, setToggle] = React.useState(false);
-
   const onClickShow = () => setToggle(true);
   const onClickHide = () => setToggle(false);
-  const wishlist = useSelector((state) => state.wishlistSlice.wishlist);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  }, [wishlist]);
+    dispatch(loadWishlist());
+  }, []);
 
   return (
     <div className="App">

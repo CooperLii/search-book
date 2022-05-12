@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { addWishlist } from "../../redux/slices/wishlistSlice";
+import { addBookToWishlist } from "../../redux/slices/wishlistSlice";
 
 const BookInfo = ({ item }) => {
   const dispatch = useDispatch();
@@ -8,11 +8,15 @@ const BookInfo = ({ item }) => {
   const { authors, publisher, publishedDate, title, description } =
     item.volumeInfo;
   const thumbnail = item?.volumeInfo?.imageLinks?.thumbnail || "";
+
+  const handleAddWishlist = (newBook) => {
+    dispatch(addBookToWishlist(newBook));
+  };
   return (
     <li
       className="book-cardView"
       onClick={() => {
-        dispatch(addWishlist(item));
+        handleAddWishlist(item);
       }}
     >
       <div className="book-image">
@@ -20,7 +24,7 @@ const BookInfo = ({ item }) => {
       </div>
       <div className="bookinfo-container">
         <div className="bookinfo">
-          <h2>{title}</h2>
+          <h2>{title !== undefined ? title : "N/A"}</h2>
         </div>
         <div className="bookinfo">
           <p>

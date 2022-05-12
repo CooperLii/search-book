@@ -7,4 +7,8 @@ export default configureStore({
     searchbookSlice: searchbookReducer,
     wishlistSlice: wishlistReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });

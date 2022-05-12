@@ -1,70 +1,39 @@
-import React, { useEffect } from "react";
+import React from "react";
 import SearchResult from "./SearchResult";
-import { searchbookApi } from "../../apis/searchbookApi";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  loadSearchResult,
-  updateTotalItems,
-  decrementCurrentPage,
-  incrementCurrentPage,
-  updateCurrentPage,
-} from "../../redux/slices/searchbookSlice";
+import { changePage } from "../../redux/slices/searchbookSlice";
 import Pagination from "../Pagination/Pagination";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-
-  const keyword = useSelector((state) => state.searchbookSlice.keyword);
   const currentPage = useSelector((state) => state.searchbookSlice.currentPage);
   const totalItems = useSelector((state) => state.searchbookSlice.totalItems);
-  const itemsPerPage = 5;
-
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
+  const itemsPerPage = useSelector(
+    (state) => state.searchbookSlice.itemsPerPage
+  );
+  const totalPages = useSelector((state) => state.searchbookSlice.totalPages);
   const handleClickPrev = () => {
-    if (currentPage <= 1) {
-      return;
-    }
-    dispatch(decrementCurrentPage());
+    dispatch(changePage(currentPage - 1));
   };
 
   const handleClickNext = () => {
-    if (currentPage >= totalPages) {
-      return;
-    }
-    dispatch(incrementCurrentPage());
+    dispatch(changePage(currentPage + 1));
   };
 
-  const handleClickPage = (targetPageNumber) => {
-    dispatch(updateCurrentPage(targetPageNumber));
+  const handleClickPage = (targetPage) => {
+    dispatch(changePage(targetPage));
   };
-
-  useEffect(() => {
-    (async () => {
-      if (keyword === "") return;
-      const result = await searchbookApi(keyword, currentPage, 5);
-
-      if (result?.data?.totalItems !== undefined) {
-        dispatch(updateTotalItems(result.data.totalItems));
-      }
-      if (result?.data?.items !== undefined) {
-        dispatch(loadSearchResult(result.data.items));
-      }
-
-      window.scrollTo(0, 0);
-    })();
-  }, [currentPage, keyword]);
 
   return (
     <section className="bookList-section">
       <Pagination
-        itemsPerPage={itemsPerPage}
-        handleClickNext={handleClickNext}
-        handleClickPrev={handleClickPrev}
-        currentPage={currentPage}
-        totalItems={totalItems}
-        handleClickPage={handleClickPage}
         totalPages={totalPages}
+        itemsPerPage={itemsPerPage}
+        handleClickPrev={handleClickPrev}
+        handleClickNext={handleClickNext}
+        totalItems={totalItems}
+        currentPage={currentPage}
+        handleClickPage={handleClickPage}
       >
         <SearchResult></SearchResult>
       </Pagination>
