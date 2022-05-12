@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { searchbookApi } from "../../apis/searchbookApi";
 
+// use redux thunk to handle the side effects
 export const updateKeyword = createAsyncThunk(
   "searchbookSlice/updateKeyword",
   async (keyword, { getState }) => {
     const { itemsPerPage } = getState().searchbookSlice;
-    const result = await searchbookApi(keyword, 1, itemsPerPage);
+    const result = await searchbookApi(keyword, 1, itemsPerPage); // side effect
     return result;
   }
 );
@@ -16,7 +17,7 @@ export const changePage = createAsyncThunk(
     const { totalPages, keyword, itemsPerPage } = getState().searchbookSlice;
     if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages)
       return rejectWithValue("invalid page number!");
-    const result = await searchbookApi(keyword, targetPage, itemsPerPage);
+    const result = await searchbookApi(keyword, targetPage, itemsPerPage); // side effect
     return result;
   }
 );
@@ -32,27 +33,6 @@ const searchbookSlice = createSlice({
     itemsPerPage: 5,
     isLoading: false,
   },
-
-  // reducers: {
-  //   loadSearchResult: (state, action) => {
-  //     state.searchResult = action.payload;
-  //   },
-  //   updateTotalItems: (state, action) => {
-  //     state.totalItems = action.payload;
-  //   },
-  //   updateCurrentPage: (state, action) => {
-  //     state.currentPage = action.payload;
-  //   },
-  //   incrementCurrentPage: (state) => {
-  //     state.currentPage = state.currentPage + 1;
-  //   },
-  //   decrementCurrentPage: (state) => {
-  //     state.currentPage = state.currentPage - 1;
-  //   },
-  //   updateKeyword: (state, action) => {
-  //     state.keyword = action.payload;
-  //   },
-  // },
 
   extraReducers: {
     [updateKeyword.pending]: (state, action) => {
@@ -95,12 +75,4 @@ const searchbookSlice = createSlice({
   },
 });
 
-// export const {
-//   loadSearchResult,
-//   updateTotalItems,
-//   updateCurrentPage,
-//   incrementCurrentPage,
-//   decrementCurrentPage,
-//   updateKeyword,
-// } = searchbookSlice.actions;
 export default searchbookSlice.reducer;

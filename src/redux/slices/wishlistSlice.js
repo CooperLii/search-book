@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+// use redux thunk to handle the side effects
 export const loadWishlist = createAsyncThunk(
   "wishlistSlice/loadWishlist",
   async () => {
     //get the wishlist from localStorage
-    const result = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    const result = JSON.parse(localStorage.getItem("wishlist") || "[]"); // side effect
     return result;
   }
 );
@@ -42,26 +43,6 @@ const wishlistSlice = createSlice({
     itemsPerPage: 5,
   },
 
-  // reducers: {
-  //   loadWishlist: (state, action) => {
-  //     state.wishlist = action.payload;
-  //   },
-  //   addWishlist: (state, action) => {
-  //     const prev = state.wishlist;
-  //     const bookMap = {};
-  //     const newWishlist = [action.payload, ...prev];
-  //     // ensure unique books in the wishlist
-  //     newWishlist.forEach((book) => {
-  //       bookMap[book.id] = book;
-  //     });
-  //     state.wishlist = Object.values(bookMap);
-  //   },
-  //   deleteWishlist: (state, action) => {
-  //     state.wishlist = state.wishlist.filter(
-  //       (item) => item.id !== action.payload
-  //     );
-  //   },
-  // },
   reducers: {
     nextPage: (state, action) => {
       if (state.currentPage < state.totalPages) {
@@ -104,7 +85,6 @@ const wishlistSlice = createSlice({
         (state.currentPage - 1) * state.itemsPerPage,
         state.currentPage * state.itemsPerPage
       );
-      //console.log("sliceResult",state.wishlist.slice((state.currentPage-1)*state.itemsPerPage,state.currentPage*state.itemsPerPage))
     },
     [addBookToWishlist.fulfilled]: (state, action) => {
       state.wishlist = action.payload;
