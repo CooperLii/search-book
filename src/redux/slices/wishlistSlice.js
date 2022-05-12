@@ -106,7 +106,9 @@ const wishlistSlice = createSlice({
         state.currentPage === prevTotalPages
       ) {
         // move the user to previous page
-        state.currentPage = state.currentPage - 1;
+        if (state.currentPage - 1 !== 0) {
+          state.currentPage = state.currentPage - 1;
+        }
       }
       state.wishlistForCurPage = state.wishlist.slice(
         (state.currentPage - 1) * state.itemsPerPage,
